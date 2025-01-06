@@ -8,6 +8,7 @@ requests = "*"
 requests-oauthlib = "*"
 twine = "*"
 python-exact-online = {file = ".", editable = true}
+python-dotenv = "*"
 
 [dev-packages]
 
