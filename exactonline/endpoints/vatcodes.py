@@ -1,8 +1,8 @@
-from .base import APIEndpoint
+from .base import APIEndpointWithDivision
 
 from exactonline.models.vat import VATPercentageList, VATPercentage, VATCode, VATCodeList
 
-class VATCodeMethods(APIEndpoint):
+class VATCodeMethods(APIEndpointWithDivision):
 
     def __init__(self, api):
         super().__init__(api, 'vat/VATCodes', VATCode, VATCodeList)

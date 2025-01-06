@@ -7,8 +7,9 @@ name = "pypi"
 requests = "*"
 requests-oauthlib = "*"
 twine = "*"
+python-exact-online = {file = ".", editable = true}
 
 [dev-packages]
 
 [requires]
-python_version = "3.6"
+python_version = "3.11"

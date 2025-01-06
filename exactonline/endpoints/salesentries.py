@@ -1,8 +1,8 @@
-from .base import APIEndpoint
+from .base import APIEndpointWithDivision
 
 from exactonline.models.salesentries import SalesEntryLineList, SalesEntryList, SalesEntry, SalesEntryLine
 
-class SalesEntryMethods(APIEndpoint):
+class SalesEntryMethods(APIEndpointWithDivision):
 
     def __init__(self, api):
         super().__init__(api, 'salesentry/SalesEntries', SalesEntry, SalesEntryList, pkField='EntryID')

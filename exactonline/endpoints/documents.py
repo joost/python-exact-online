@@ -1,9 +1,9 @@
-from .base import APIEndpoint
+from .base import APIEndpointWithDivision
 
 from exactonline.models.documents import Document,DocumentAttachment, DocumentAttachmentList, DocumentList, DocumentType, DocumentTypeCategory, DocumentTypeCategoryList, DocumentTypeList
 from exactonline.utils import encodeFileToB64, getFileName
 
-class DocumentMethods(APIEndpoint):
+class DocumentMethods(APIEndpointWithDivision):
 
     def __init__(self, api):
         super().__init__(api, 'documents', Document, DocumentList)

@@ -15,8 +15,8 @@ class AuthHandler:
         self.api = api
         self.cacheHandler = api.cacheHandler
 
-        self.authUrl = config.AUTH_URL
-        self.tokenUrl = config.ACCESS_TOKEN_URL
+        self.authUrl = self.api.config.AUTH_URL
+        self.tokenUrl = self.api.config.ACCESS_TOKEN_URL
         self.redirectUri = None
 
         self.state = None

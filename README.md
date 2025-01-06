@@ -1,7 +1,9 @@
 # python-exact-online
+
 Basic wrapper for the Exact Online REST API (v1)
 
 ## Limitations
+
 Only functionalities that I need are worked out. No intention to develop any further.
 
 # Getting started
@@ -28,6 +30,10 @@ Make the connection with your provided CLIENTID and CLIENTSECRET.
 
 ```python
 api = ExactOnlineAPI(CLIENTID, CLIENTSECRET)
+# Extra config for NL
+api.config.BASE_URL = 'https://start.exactonline.nl'
+api.config.AUTH_URL = 'https://start.exactonline.nl/api/oauth2/auth'
+api.config.TOKEN_URL = 'https://start.exactonline.nl/api/oauth2/token'
 ```
 
 Exact Online authentication is build on OAuth2. A basic script to obtain your first tokens can be found below. After you've obtained your tokens, the refresh tokens are automatically used to renew the token if needed. No manual action is required after that.
@@ -46,21 +52,21 @@ response = input('paste response: ')
 token = api.authHandler.retrieveToken(response, redirectUri=REDIRECT_URI)
 ```
 
-When using the script above, any REDIRECT_URI will do. Simply copy and paste the response URI so the handler can obtain the right tokens. 
+When using the script above, any REDIRECT_URI will do. Simply copy and paste the response URI so the handler can obtain the right tokens.
 
 !! The Redirect URI has to be registered in your Exact App Center.
 
 # Available functionalities
 
-| Object        | Endpoint | Actions       |
-| ------------- | ------------- | ------------- |
-| SalesEntry/SalesEntryLine  | salesEntries | List, Get, Filter, Create, Update, Delete |
-| Documents/Attachments  | documents | List, Get, Filter, Create, Update, Delete  |
-| Journals  | journals | List, Get, Filter, Create, Update, Delete  |
-| GLAccounts  | glAccounts | List, Get, Filter, Create, Update, Delete  |
-| Accounts  | accounts | List, Get, Filter, Create, Update, Delete  |
-| Contacts  | contacts | List, Get, Filter, Create, Update, Delete  |
-| VATCodes  | vatCodes | List, Get, Filter, Create, Update, Delete  |
+| Object                    | Endpoint     | Actions                                   |
+| ------------------------- | ------------ | ----------------------------------------- |
+| SalesEntry/SalesEntryLine | salesEntries | List, Get, Filter, Create, Update, Delete |
+| Documents/Attachments     | documents    | List, Get, Filter, Create, Update, Delete |
+| Journals                  | journals     | List, Get, Filter, Create, Update, Delete |
+| GLAccounts                | glAccounts   | List, Get, Filter, Create, Update, Delete |
+| Accounts                  | accounts     | List, Get, Filter, Create, Update, Delete |
+| Contacts                  | contacts     | List, Get, Filter, Create, Update, Delete |
+| VATCodes                  | vatCodes     | List, Get, Filter, Create, Update, Delete |
 
 ## Basic setup
 
@@ -89,8 +95,8 @@ for account in accounts.items():
     print(account.ID)
 ```
 
-
 ### Get
+
 ```python
 accounts = api.accounts.get('uid')
 ```
@@ -144,12 +150,12 @@ api.account.update(acc)
 Returns True if succeeded.
 
 ### Delete
+
 ```python
 accounts = api.accounts.delete('uid')
 ```
 
 Returns True if succeeded.
-
 
 ## Creating documents
 

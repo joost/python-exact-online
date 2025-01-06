@@ -1,9 +1,10 @@
+import os
 import base64
 import requests
 import json
 import time
 
-from . import config
+# from . import config
 from .cachehandler import CacheHandler
 from .authhandler import AuthHandler
 
@@ -14,10 +15,19 @@ from .endpoints.glaccounts import GLAccountMethods
 from .endpoints.documents import DocumentMethods
 from .endpoints.contacts import ContactMethods
 from .endpoints.vatcodes import VATCodeMethods
+from .endpoints.webhook_subscriptions import WebhookSubscriptionMethods
+from .endpoints.me import MeMethods
+
+class Config:
+    def __init__(self):
+        self.CACHE = {}
+        self.BASE_URL = os.getenv('EXACT_BASE_URL', 'https://start.exactonline.be/api/v1')
+        self.AUTH_URL = os.getenv('EXACT_AUTH_URL', 'https://start.exactonline.be/api/oauth2/auth')
+        self.ACCESS_TOKEN_URL = os.getenv('EXACT_ACCESS_TOKEN_URL', 'https://start.exactonline.be/api/oauth2/token')
 
 class ExactOnlineAPI:
 
-    def __init__(self, client_id, client_secret, stall_if_rate_limit_exceeded=True):
+    def __init__(self, client_id, client_secret, stall_if_rate_limit_exceeded=True, config=Config()):
 
         self.clientId = client_id
         self.clientSecret = client_secret
@@ -38,7 +48,9 @@ class ExactOnlineAPI:
         # Otherwise, we'll throw an error
         self.stall_if_rate_limit_exceeded = stall_if_rate_limit_exceeded
 
-        self.baseUrl = config.BASE_URL
+        self.config = config
+
+        self.baseUrl = self.config.BASE_URL
         self.cacheHandler = CacheHandler()
         self.authHandler = AuthHandler(self, self.clientId, self.clientSecret)
 
@@ -50,7 +62,15 @@ class ExactOnlineAPI:
         self.contacts = ContactMethods(self)
         self.vatCodes = VATCodeMethods(self)
 
+        self.webhookSubscriptions = WebhookSubscriptionMethods(self)
+
+        self.me = MeMethods(self)
+
     def doRequest(self, method, url, data=None, headers=None, files=None):
+        # reqUrl = '{base}/{division}/{url}'.format(base=self.baseUrl, division=self.division, url=url)
+        reqUrl = '{base}/{url}'.format(base=self.baseUrl, url=url)
+
+        print('Request URL: ', reqUrl)
 
         if headers:
             mergedHeaders = self.headers
@@ -58,8 +78,6 @@ class ExactOnlineAPI:
             headers = mergedHeaders
         else: headers = self.headers
 
-        reqUrl = '{base}/{division}/{url}'.format(base=self.baseUrl, division=self.division, url=url)
-        
         if method == 'GET':
             response = requests.get(reqUrl, params=data, headers=headers)
         elif method == 'POST':
