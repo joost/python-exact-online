@@ -21,7 +21,7 @@ pip install python-exact-online
 Import the package and the ExactOnlineAPI.
 
 ```python
-from exactonline.api import ExactOnlineAPI
+from exactonline.api import ExactOnlineAPI, Config
 ```
 
 ### Setup connection
@@ -29,11 +29,12 @@ from exactonline.api import ExactOnlineAPI
 Make the connection with your provided CLIENTID and CLIENTSECRET.
 
 ```python
-api = ExactOnlineAPI(CLIENTID, CLIENTSECRET)
-# Extra config for NL
-api.config.BASE_URL = 'https://start.exactonline.nl'
-api.config.AUTH_URL = 'https://start.exactonline.nl/api/oauth2/auth'
-api.config.TOKEN_URL = 'https://start.exactonline.nl/api/oauth2/token'
+myConfig = Config() # Configure for NL instead of BE endpoints
+myConfig.BASE_URL = 'https://start.exactonline.nl/api/v1'
+myConfig.AUTH_URL = 'https://start.exactonline.nl/api/oauth2/auth'
+myConfig.ACCESS_TOKEN_URL = 'https://start.exactonline.nl/api/oauth2/token'
+
+api = ExactOnlineAPI(CLIENTID, CLIENTSECRET, config=myConfig)
 ```
 
 Exact Online authentication is build on OAuth2. A basic script to obtain your first tokens can be found below. After you've obtained your tokens, the refresh tokens are automatically used to renew the token if needed. No manual action is required after that.
