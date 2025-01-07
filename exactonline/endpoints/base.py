@@ -17,8 +17,21 @@ class APIEndpoint:
 
     def endpoint(self):
         return self.endpointString
-        
+
     def list(self, select=[], filter=None, filter_operator='and'):
+        """
+        Retrieve a list of objects from the endpoint.
+
+        Parameters:
+        select (list): List of fields to select.
+        filter (str or dict): Filter criteria. Can be a string or a dictionary.
+            - Example with dictionary: filter={ 'Blocked' : 'false' }
+            - Example with string: filter="Account eq guid'{account.ID}'"
+        filter_operator (str): Logical operator for combining filters. Can be 'and' or 'or'.
+
+        Returns:
+        listObject: List of objects retrieved from the endpoint.
+        """
         url = self.endpoint()
         
         if filter:
@@ -26,20 +39,26 @@ class APIEndpoint:
                 raise ValueError("'filter_operator' can only be 'and' or 'or'.")
 
             url = '{url}?$filter='.format(url=url)
-            count = 0
-            for field, value in filter.items():
-                
-                # if not boolean, put single quotes around value
-                if value.lower() not in ['false', 'true']:
-                    value = "'{value}'".format(value=value)
-                
-                if count == 0:
-                    url = "{url}{field} eq {value}".format(url=url, field=field, value=value)
-                else:
-                    url = "{url} {operator} {field} eq {value}".format(url=url, operator=filter_operator, field=field, value=value)
-                    
+            count = 0 # FIXME: Why do we have count?
+            # if field is a string simply add it to the url
+            if isinstance(filter, str):
+                url = "{url}{filter}".format(url=url, filter=filter)
                 count += 1
-        
+            # if field is a dictionary, loop through it
+            elif isinstance(filter, dict):
+                for field, value in filter.items():
+
+                    # if not boolean, put single quotes around value
+                    if value.lower() not in ['false', 'true']:
+                        value = "'{value}'".format(value=value)
+
+                    if count == 0:
+                        url = "{url}{field} eq {value}".format(url=url, field=field, value=value)
+                    else:
+                        url = "{url} {operator} {field} eq {value}".format(url=url, operator=filter_operator, field=field, value=value)
+
+                    count += 1
+
         if select:
             url = '{url}&$select={select}'.format(url=url, select=",".join(select))
         
@@ -130,5 +149,7 @@ class RequiresFiltering:
 
 class APIEndpointWithDivision(APIEndpoint):
     def endpoint(self):
+        if not self.api.division:
+            raise ValueError("Division is not set. Set the division using the api.division property.")
         endpointWithDivision = '{division}/{endpoint}'.format(division=self.api.division, endpoint=super().endpoint())
         return endpointWithDivision
