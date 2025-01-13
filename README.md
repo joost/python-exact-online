@@ -33,6 +33,8 @@ myConfig = Config() # Configure for NL instead of BE endpoints
 myConfig.BASE_URL = 'https://start.exactonline.nl/api/v1'
 myConfig.AUTH_URL = 'https://start.exactonline.nl/api/oauth2/auth'
 myConfig.ACCESS_TOKEN_URL = 'https://start.exactonline.nl/api/oauth2/token'
+# Change the cache handler storing tokens
+myConfig.cache_hander = FirestoreCacheHandler()
 
 api = ExactOnlineAPI(CLIENTID, CLIENTSECRET, config=myConfig)
 ```

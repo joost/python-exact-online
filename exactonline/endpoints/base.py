@@ -1,4 +1,5 @@
 from .. import config
+
 class APIEndpoint:
 
     def __init__(self, 
@@ -112,10 +113,15 @@ class APIEndpoint:
         return listObj
 
     def create(self, object):
+        config.logger.debug("CREATE")
         url = self.endpoint()
         data = object.getJSON()
 
         status, headers, respJson = self.api.post(url, data)
+
+        config.logger.debug("status: ", status)
+        config.logger.debug("headers: ", headers)
+        config.logger.debug("respJson: ", respJson)
 
         if status not in [200, 201]: return self.singleObject().parseError(status, respJson)
 

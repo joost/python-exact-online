@@ -3,6 +3,7 @@ import base64
 import requests
 import json
 import time
+import logging
 
 # from . import config
 from .cachehandler import CacheHandler
@@ -19,12 +20,33 @@ from .endpoints.webhook_subscriptions import WebhookSubscriptionMethods
 from .endpoints.me import MeMethods
 
 class Config:
-    def __init__(self):
+    def __init__(self, cache_handler=None, logger=None):
         self.CACHE = {}
         self.BASE_URL = os.getenv('EXACT_BASE_URL', 'https://start.exactonline.be/api/v1')
         self.AUTH_URL = os.getenv('EXACT_AUTH_URL', 'https://start.exactonline.be/api/oauth2/auth')
         self.ACCESS_TOKEN_URL = os.getenv('EXACT_ACCESS_TOKEN_URL', 'https://start.exactonline.be/api/oauth2/token')
+        
+        # Set cache handler
+        self.cache_handler = cache_handler if cache_handler else CacheHandler()
+        
+        # Set logger
+        self.logger = logger if logger else self.configureLogger('python-exact-online')
 
+    def configureLogger(self, name, level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s'):
+        logger = logging.getLogger(name)
+        logger.setLevel(level)
+        
+        if not logger.handlers:
+            ch = logging.StreamHandler()
+            ch.setLevel(level)
+            formatter = logging.Formatter(format)
+            ch.setFormatter(formatter)
+            logger.addHandler(ch)
+        
+        return logger
+    
+    def setLogLevel(self, level):
+        self.logger.setLevel(level)
 class ExactOnlineAPI:
 
     def __init__(self, client_id, client_secret, stall_if_rate_limit_exceeded=True, config=Config()):
@@ -51,7 +73,7 @@ class ExactOnlineAPI:
         self.config = config
 
         self.baseUrl = self.config.BASE_URL
-        self.cacheHandler = CacheHandler()
+        self.cacheHandler = self.config.cache_handler
         self.authHandler = AuthHandler(self, self.clientId, self.clientSecret)
 
         self.salesEntries = SalesEntryMethods(self)
@@ -70,7 +92,7 @@ class ExactOnlineAPI:
         # reqUrl = '{base}/{division}/{url}'.format(base=self.baseUrl, division=self.division, url=url)
         reqUrl = '{base}/{url}'.format(base=self.baseUrl, url=url)
 
-        print('Request URL: ', reqUrl)
+        self.config.logger.debug('Request URL: ', reqUrl)
 
         if headers:
             mergedHeaders = self.headers
