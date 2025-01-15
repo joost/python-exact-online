@@ -3,7 +3,7 @@ from .base import ObjectListModel, BaseModel
 class MeList(ObjectListModel):
 
     def __init__(self):
-        super().__init__(list=[], listObject=WebhookSubscription)
+        super().__init__(list=[], listObject=None)
 
 # <d:CurrentDivision m:type="Edm.Int32">3973860</d:CurrentDivision>
 # <d:DivisionCustomer m:type="Edm.Guid">16cfedaa-6f5c-4559-b8c3-6b208c63ee9b</d:DivisionCustomer>

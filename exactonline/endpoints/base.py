@@ -69,7 +69,7 @@ class APIEndpoint:
 
         while('__next' in respJson['d']):
             nextUrl = respJson['d']['__next']
-            nextUrl = nextUrl.replace('{0}/{1}/'.format(config.BASE_URL, self.api.division), '')
+            nextUrl = nextUrl.replace('{0}/{1}/'.format(self.api.config.BASE_URL, self.api.division), '')
 
             status, headers, respJson = self.api.get(nextUrl)
             if status != 200: return self.listObject().parseError(status, respJson)
@@ -101,7 +101,7 @@ class APIEndpoint:
 
         while('__next' in respJson['d']):
             nextUrl = respJson['d']['__next']
-            nextUrl = nextUrl.replace('{0}/{1}/'.format(config.BASE_URL, self.api.division), '')
+            nextUrl = nextUrl.replace('{0}/{1}/'.format(self.api.config.BASE_URL, self.api.division), '')
 
             status, headers, respJson = self.api.get(nextUrl)
             if status != 200: return self.listObject().parseError(status, respJson)
@@ -113,15 +113,15 @@ class APIEndpoint:
         return listObj
 
     def create(self, object):
-        config.logger.debug("CREATE")
+        self.api.config.logger.debug("CREATE")
         url = self.endpoint()
         data = object.getJSON()
 
         status, headers, respJson = self.api.post(url, data)
 
-        config.logger.debug("status: ", status)
-        config.logger.debug("headers: ", headers)
-        config.logger.debug("respJson: ", respJson)
+        self.api.config.logger.debug(f"status: {status}")
+        self.api.config.logger.debug(f"headers: {headers}")
+        self.api.config.logger.debug(f"respJson: {respJson}")
 
         if status not in [200, 201]: return self.singleObject().parseError(status, respJson)
 
@@ -155,7 +155,8 @@ class RequiresFiltering:
 
 class APIEndpointWithDivision(APIEndpoint):
     def endpoint(self):
-        if not self.api.division:
-            raise ValueError("Division is not set. Set the division using the api.division property.")
+        # if not self.api.division:
+        #     raise ValueError("Division is not set. Set the division using the api.division property.")
+        self.api.checkDivision()
         endpointWithDivision = '{division}/{endpoint}'.format(division=self.api.division, endpoint=super().endpoint())
         return endpointWithDivision

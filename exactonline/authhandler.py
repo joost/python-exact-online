@@ -31,8 +31,14 @@ class AuthHandler:
 
         # Check if we already have tokens stored in cache
         # If so, put them in the right variables
-
-        cacheContent = self.cacheHandler.getCache(self.clientId)
+        
+        # FIXME: The whole caching with division in mind is up for refactoring.
+        # We should be able to load an API instance with a division.
+        
+        cacheContent = None
+        if self.api.division:
+            cacheKey = f"{self.clientId}_{self.api.division}"
+            cacheContent = self.cacheHandler.getCache(cacheKey)
         if cacheContent:
             self.token = cacheContent['token']
             self.refreshToken = cacheContent['refreshToken']
@@ -56,15 +62,27 @@ class AuthHandler:
         authorizationUrl, self.state = oauth.authorization_url(self.authUrl)
         return authorizationUrl
 
-    def tokenSaver(self, oauth):
+    def tokenToDict(self):
+        return {
+            'token' : self.token,
+            'refreshToken' : self.refreshToken,
+            'expiresOn' : self.expiresOn
+        }
 
+    def tokenSaver(self, oauth):
         self.token = oauth._client.access_token
         self.refreshToken = oauth._client.refresh_token
         self.expiresOn = int(time.time() + float(oauth._client.expires_in))
 
-        cacheContent = { 'token' : self.token, 'refreshToken' : self.refreshToken, 'expiresOn' : self.expiresOn }
+        cacheContent = self.tokenToDict()
 
-        self.cacheHandler.setCache(self.clientId, cacheContent)
+        self.api.checkDivision() # We need to get the division to cache the token with it
+
+        # A division should be set, so we can cache the token with the division
+        self.api.config.logger.debug(f"Caching token with division: {self.api.division}")
+        cacheKey = f"{self.clientId}_{self.api.division}"
+        self.cacheHandler.setCache(cacheKey, cacheContent)
+
         self.setTokenHeader(self.token)
 
         return self.token
@@ -86,7 +104,6 @@ class AuthHandler:
         return token
     
     def acquireNewToken(self):
-
         tempToken = {
             'access_token' : self.token,
             'refresh_token' : self.refreshToken,
@@ -100,6 +117,7 @@ class AuthHandler:
         # If refresh token also expired, remove cache so flow can be init again
         
         try:
+            self.api.config.logger.debug("Refreshing token")
             self.oauthToken = oauth.refresh_token(self.tokenUrl, client_id=self.clientId, client_secret=self.clientSecret)
         except:
             self.cacheHandler.deleteCache(self.clientId)
@@ -110,7 +128,6 @@ class AuthHandler:
         return token
     
     def getToken(self):
-
         if self.token: return self.token
         raise NotFoundError('token is not found. init the auth flow first.')
     
@@ -119,7 +136,6 @@ class AuthHandler:
         self.api.headers.update({'Authorization' : bearerStr})
     
     def checkHeaderTokens(self):
-
         # Check if token is due for renewal
         if self.isTokenDueRenewal():
             token = self.acquireNewToken()
@@ -129,7 +145,8 @@ class AuthHandler:
             
             # Check if we have a token stored in cache, if not, acquire one
             # If we do, set it in the header
-            cacheContent = self.cacheHandler.getCache(self.clientId)
+            cacheKey = f"{self.clientId}_{self.api.division}"
+            cacheContent = self.cacheHandler.getCache(cacheKey)
             token = cacheContent['token'] if cacheContent else None
 
             if token is None: token = self.getToken()

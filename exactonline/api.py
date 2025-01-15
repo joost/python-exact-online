@@ -1,5 +1,4 @@
 import os
-import base64
 import requests
 import json
 import time
@@ -32,7 +31,7 @@ class Config:
         # Set logger
         self.logger = logger if logger else self.configureLogger('python-exact-online')
 
-    def configureLogger(self, name, level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s'):
+    def configureLogger(self, name, level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s'):
         logger = logging.getLogger(name)
         logger.setLevel(level)
         
@@ -92,7 +91,7 @@ class ExactOnlineAPI:
         # reqUrl = '{base}/{division}/{url}'.format(base=self.baseUrl, division=self.division, url=url)
         reqUrl = '{base}/{url}'.format(base=self.baseUrl, url=url)
 
-        self.config.logger.debug('Request URL: ', reqUrl)
+        self.config.logger.debug(f"Request URL: {reqUrl}")
 
         if headers:
             mergedHeaders = self.headers
@@ -132,9 +131,8 @@ class ExactOnlineAPI:
         return response
 
     def request(self, method, url, data=None, headers=None, files=None):
-
         self.authHandler.checkHeaderTokens()
-        self.checkDivision()
+        # self.checkDivision()
 
         response = self.doRequest(method, url, data, headers, files)
         respContent = json.loads(response.content) if response.content else None
@@ -143,11 +141,15 @@ class ExactOnlineAPI:
     
     def checkDivision(self):
         if not self.division:
-            url = '{base}/current/Me?$select=CurrentDivision'.format(base=self.baseUrl)
-            response = requests.get(url, params=None, headers=self.headers)
+            me = self.me.get()
+            # url = '{base}/current/Me?$select=CurrentDivision'.format(base=self.baseUrl)
+            # self.config.logger.debug(f"Checking division with URL: {url}")
+            # response = requests.get(url, params=None, headers=self.headers)
 
-            jsonResp = json.loads(response.content)
-            self.division = jsonResp['d']['results'][0]['CurrentDivision']
+            # self.config.logger.debug(f"Response: {response.content}")
+            # jsonResp = json.loads(response.content)
+            # self.division = jsonResp['d']['results'][0]['CurrentDivision']
+            self.division = me.CurrentDivision
 
     def get(self, url, data=None, headers=None):
         status, headers, response = self.request('GET', url, data, headers)
