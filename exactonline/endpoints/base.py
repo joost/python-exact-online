@@ -69,7 +69,7 @@ class APIEndpoint:
 
         while('__next' in respJson['d']):
             nextUrl = respJson['d']['__next']
-            nextUrl = nextUrl.replace('{0}/{1}/'.format(self.api.config.BASE_URL, self.api.division), '')
+            nextUrl = nextUrl.replace('{0}/{1}/'.format(config.BASE_URL, self.api.division), '')
 
             status, headers, respJson = self.api.get(nextUrl)
             if status != 200: return self.listObject().parseError(status, respJson)
@@ -119,9 +119,9 @@ class APIEndpoint:
 
         status, headers, respJson = self.api.post(url, data)
 
-        self.api.config.logger.debug(f"status: {status}")
-        self.api.config.logger.debug(f"headers: {headers}")
-        self.api.config.logger.debug(f"respJson: {respJson}")
+        self.api.config.logger.debug("status: ", status)
+        self.api.config.logger.debug("headers: ", headers)
+        self.api.config.logger.debug("respJson: ", respJson)
 
         if status not in [200, 201]: return self.singleObject().parseError(status, respJson)
 

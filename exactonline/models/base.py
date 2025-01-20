@@ -57,9 +57,12 @@ class BaseModel:
 
         return self
     
+    def getDict(self):
+        return self.__dict__.items()
+    
     def getJSON(self):
         dikt = {}
-        for k, v in self.__dict__.items():
+        for k, v in self.getDict():
             if v:
                 k = formatKey(k)
                 if isinstance(v, BaseModel):

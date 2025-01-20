@@ -153,6 +153,10 @@ class ExactOnlineAPI:
 
     def get(self, url, data=None, headers=None):
         status, headers, response = self.request('GET', url, data, headers)
+        self.config.logger.debug(f"GET request to {url}")
+        self.config.logger.debug(f"status: {status}")
+        self.config.logger.debug(f"headers: {headers}")
+        self.config.logger.debug(f"response: {response}")
         return status, headers, response
     
     def post(self, url, data=None, headers=None, files=None):

@@ -136,8 +136,10 @@ class AuthHandler:
         self.api.headers.update({'Authorization' : bearerStr})
     
     def checkHeaderTokens(self):
+        self.api.config.logger.debug("Checking header tokens")
         # Check if token is due for renewal
         if self.isTokenDueRenewal():
+            self.api.config.logger.debug("Token is due for renewal")
             token = self.acquireNewToken()
 
         # If no authorization header is found, we need to include the token
