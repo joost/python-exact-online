@@ -11,6 +11,9 @@ python-exact-online = {file = ".", editable = true}
 python-dotenv = "*"
 
 [dev-packages]
+mypy = "*"
+google-api-python-client-stubs = "*"
+types-requests = "*"
 
 [requires]
 python_version = "3.11"
