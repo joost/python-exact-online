@@ -9,6 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
   name = 'python-exact-online',         
   packages=['exactonline', 'exactonline.models', 'exactonline.constants', 'exactonline.cache', 'exactonline.endpoints'],
+  include_package_data=True,
   package_data={
     'exactonline': ['py.typed'],  # Include the py.typed file
   },
