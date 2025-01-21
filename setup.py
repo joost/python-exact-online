@@ -9,6 +9,9 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
   name = 'python-exact-online',         
   packages=['exactonline', 'exactonline.models', 'exactonline.constants', 'exactonline.cache', 'exactonline.endpoints'],
+  package_data={
+    'exactonline': ['py.typed'],  # Include the py.typed file
+  },
   version = '1.1.0',
   license='GPL-3.0-or-later',
   description = 'Basic wrapper for the Exact Online REST API (v1)',
