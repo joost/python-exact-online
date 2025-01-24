@@ -109,6 +109,9 @@ class ExactOnlineAPI:
         elif method == 'DELETE':
             response = requests.delete(reqUrl, params=json.dumps(data), headers=headers)
 
+        self.config.logger.debug(f"Response: {response}")
+        self.config.logger.debug(f"Response content: {response.content}")
+
         # Check the rate limit headers and update internally
         if 'X-RateLimit-Minutely-Remaining' in response.headers:
             self.api_rate_limits['minutely_remaining'] = int(response.headers['X-RateLimit-Minutely-Remaining'])

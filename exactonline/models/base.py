@@ -57,12 +57,12 @@ class BaseModel:
 
         return self
     
-    def getDict(self):
-        return self.__dict__.items()
-    
+    def to_dict(self) -> dict:
+        return dict(self.__dict__.items())
+
     def getJSON(self):
         dikt = {}
-        for k, v in self.getDict():
+        for k, v in self.to_dict():
             if v:
                 k = formatKey(k)
                 if isinstance(v, BaseModel):
@@ -111,7 +111,6 @@ class ObjectListModel(BaseModel):
         return object
     
     def parse(self, json):
-
         if isinstance(json, dict):
             itemObj = self.listObject().parse(json)
             self.add(itemObj)
@@ -119,16 +118,13 @@ class ObjectListModel(BaseModel):
             for item in json:
                 itemObj = self.listObject().parse(item)
                 self.add(itemObj)
-
         return self
     
-    def getJSON(self):
-        list = []
+    def to_dict(self):
+        return [item.to_dict() for item in self.list]
 
-        for item in self.list:
-            list.append(item.getJSON())
-        
-        return list if len(list) > 0 else None
+    def getJSON(self):
+        return [item.getJSON() for item in self.list]
 
     def items(self):
         return self.list
