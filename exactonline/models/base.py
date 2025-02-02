@@ -1,5 +1,6 @@
 import re
 import datetime
+from typing import Any, Dict, List
 
 #==============[HELPER FUNCTIONS]=================#
 
@@ -57,7 +58,7 @@ class BaseModel:
 
         return self
     
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         return dict(self.__dict__.items())
 
     def getJSON(self):
@@ -120,7 +121,7 @@ class ObjectListModel(BaseModel):
                 self.add(itemObj)
         return self
     
-    def to_dict(self):
+    def to_dict_list(self) -> List[Dict[str, Any]]:
         return [item.to_dict() for item in self.list]
 
     def getJSON(self):
