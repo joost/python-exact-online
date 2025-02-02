@@ -63,7 +63,9 @@ class BaseModel:
 
     def getJSON(self):
         dikt = {}
-        for k, v in self.to_dict():
+        for k, v in self.to_dict().items():
+            print("k: ", k)
+            print("v: ", v)
             if v:
                 k = formatKey(k)
                 if isinstance(v, BaseModel):
