@@ -161,3 +161,22 @@ class DocumentTypeCategory(BaseModel):
         self.Created = Created
         self.Description = Description
         self.Modified = Modified
+
+class DocumentCategoryList(ObjectListModel):
+    def __init__(self):
+        super().__init__(list=[], listObject=DocumentCategory)
+
+
+class DocumentCategory(BaseModel):
+
+    def __init__(self,
+        ID=None,
+        Created=None,
+        Description=None,
+        Modified=None
+    ):
+
+        self.ID = ID
+        self.Created = Created
+        self.Description = Description
+        self.Modified = Modified

@@ -17,6 +17,7 @@ from .endpoints.contacts import ContactMethods
 from .endpoints.vatcodes import VATCodeMethods
 from .endpoints.webhook_subscriptions import WebhookSubscriptionMethods
 from .endpoints.me import MeMethods
+from .endpoints.tasks import TaskMethods
 
 class Config:
     def __init__(self, cache_handler=None, logger=None):
@@ -82,6 +83,7 @@ class ExactOnlineAPI:
         self.documents = DocumentMethods(self)
         self.contacts = ContactMethods(self)
         self.vatCodes = VATCodeMethods(self)
+        self.tasks = TaskMethods(self)
 
         self.webhookSubscriptions = WebhookSubscriptionMethods(self)
 
